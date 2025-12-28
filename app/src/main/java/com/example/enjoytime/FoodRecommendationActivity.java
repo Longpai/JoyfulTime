@@ -110,9 +110,9 @@ public class FoodRecommendationActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "需要定位权限才能使用此功能", Toast.LENGTH_SHORT).show();
                 // 使用默认城市
-                currentCity = "北京";
+                currentCity = "重庆";
                 binding.cityEditText.setText(currentCity);
-                loadFoodRecommendations(currentCity, "美食");
+                loadFoodRecommendations(currentCity, "火锅");
             }
         }
     }
@@ -136,9 +136,9 @@ public class FoodRecommendationActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Toast.makeText(FoodRecommendationActivity.this, "定位失败: " + error, Toast.LENGTH_SHORT).show();
                     // 使用默认城市
-                    currentCity = "北京";
+                    currentCity = "重庆";
                     binding.cityEditText.setText(currentCity);
-                    loadFoodRecommendations(currentCity, "美食");
+                    loadFoodRecommendations(currentCity, "火锅");
                 });
             }
         });
