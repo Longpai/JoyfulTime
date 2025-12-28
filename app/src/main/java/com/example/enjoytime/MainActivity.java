@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (section3 != null) {
             section3.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, SectionThreeActivity.class);
+                Intent intent = new Intent(MainActivity.this, FoodRecommendationActivity.class);
                 startActivity(intent);
             });
         }
