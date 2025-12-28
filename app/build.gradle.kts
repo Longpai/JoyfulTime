@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.recyclerview)
     implementation(libs.okhttp)
     implementation(libs.gson)
+    implementation(libs.play.services.location)
     // 使用本地jar包：高德地图SDK
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     testImplementation(libs.junit)
