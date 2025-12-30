@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+<<<<<<< HEAD
+=======
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+>>>>>>> 52ec182 (添加用户相关功能)
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,20 +18,64 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+<<<<<<< HEAD
         <!-- New Area added at the top -->
         <RelativeLayout
+=======
+        <!-- Mine Section -->
+        <RelativeLayout
+            android:id="@+id/view_section_mine_container"
+>>>>>>> 52ec182 (添加用户相关功能)
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="#E1BEE7">
 
+<<<<<<< HEAD
             <TextView
+=======
+            <View
+                android:id="@+id/view_section_mine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/user_info_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:visibility="gone">  <!-- Initially hidden -->
+
+                <ImageView
+                    android:id="@+id/main_avatar_imageview"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"/>
+
+                <TextView
+                    android:id="@+id/main_username_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/mine_default_textview"
+>>>>>>> 52ec182 (添加用户相关功能)
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="我的"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+<<<<<<< HEAD
+=======
+
+>>>>>>> 52ec182 (添加用户相关功能)
         </RelativeLayout>
 
         <RelativeLayout
@@ -45,7 +93,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+<<<<<<< HEAD
                 android:text="首页"
+=======
+                android:text="影视"
+>>>>>>> 52ec182 (添加用户相关功能)
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -92,6 +144,7 @@
 
     </LinearLayout>
 
+<<<<<<< HEAD
     <!-- Right side content area: 2/3 width -->
     <LinearLayout
         android:id="@+id/right_content"
@@ -109,6 +162,29 @@
             android:src="@drawable/img"
             android:scaleType="centerCrop"
             android:contentDescription="Main Image" />
+=======
+    <!-- Right side content area -->
+    <LinearLayout
+        android:id="@+id/right_content_container"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:background="#303030">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/recommendation_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabTextColor="#FFFFFF"
+            app:tabIndicatorColor="#FFFFFF" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/recommendation_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+>>>>>>> 52ec182 (添加用户相关功能)
 
     </LinearLayout>
 
