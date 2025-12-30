@@ -1,14 +1,6 @@
 package com.example.enjoytime;
 
 import android.content.Intent;
-<<<<<<< HEAD
-import android.os.Bundle;
-import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-public class MainActivity extends AppCompatActivity {
-=======
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -32,50 +24,22 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.O
     private ImageView mainAvatarImageView;
     private TextView mainUsernameTextView;
     private TextView mineDefaultTextView;
->>>>>>> 52ec182 (添加用户相关功能)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
-=======
         userInfoLayout = findViewById(R.id.user_info_layout);
         mainAvatarImageView = findViewById(R.id.main_avatar_imageview);
         mainUsernameTextView = findViewById(R.id.main_username_textview);
         mineDefaultTextView = findViewById(R.id.mine_default_textview);
 
         View sectionMine = findViewById(R.id.view_section_mine);
->>>>>>> 52ec182 (添加用户相关功能)
         View section1 = findViewById(R.id.view_section_1);
         View section2 = findViewById(R.id.view_section_2);
         View section3 = findViewById(R.id.view_section_3);
 
-<<<<<<< HEAD
-        if (section1 != null) {
-            section1.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, SectionOneActivity.class);
-                startActivity(intent);
-            });
-        }
-
-        if (section2 != null) {
-            section2.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, SectionTwoActivity.class);
-                startActivity(intent);
-            });
-        }
-
-        if (section3 != null) {
-            section3.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, FoodRecommendationActivity.class);
-                startActivity(intent);
-            });
-        }
-    }
-}
-=======
         sectionMine.setOnClickListener(v -> {
             if (isLoggedIn) {
                 showProfile();
@@ -219,4 +183,3 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.O
         startActivity(intent);
     }
 }
->>>>>>> 52ec182 (添加用户相关功能)

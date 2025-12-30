@@ -2,10 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-<<<<<<< HEAD
-=======
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
->>>>>>> 52ec182 (添加用户相关功能)
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
@@ -17,10 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-<<<<<<< HEAD
-=======
         android:usesCleartextTraffic="true"
->>>>>>> 52ec182 (添加用户相关功能)
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -29,19 +23,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EnjoyTime">
-<<<<<<< HEAD
-        <activity
-            android:name=".Section2_3"
-            android:exported="false" />
-        <activity
-            android:name=".Section2_2"
-            android:exported="false" />
-        <activity
-            android:name=".Section2_1"
-            android:exported="false" />
-=======
-
->>>>>>> 52ec182 (添加用户相关功能)
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -51,10 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
-        <activity android:name=".SectionOneActivity" />
-        <activity android:name=".SectionTwoActivity" />
-=======
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".MoviesActivity" />
@@ -72,7 +49,6 @@
             android:exported="false" />
         <activity android:name=".SectionOneActivity" />
         <activity android:name="com.example.enjoytime.SectionTwoActivity" />
->>>>>>> 52ec182 (添加用户相关功能)
         <activity android:name=".SectionThreeActivity" />
         <activity 
             android:name=".FoodRecommendationActivity"

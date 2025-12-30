@@ -1,14 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-<<<<<<< HEAD
-    <style name="Theme.EnjoyTime" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/teal_200</item>
-    </style>
-</resources>
-=======
     <style name="Base.Theme.EnjoyTime" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/purple_500</item>
@@ -22,4 +13,3 @@
 
     <style name="Theme.EnjoyTime" parent="Base.Theme.EnjoyTime" />
 </resources>
->>>>>>> 52ec182 (添加用户相关功能)
