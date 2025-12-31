@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,17 +43,31 @@ public class AmapApiHelper {
 
     /**
      * 根据城市和关键词搜索美食餐厅
-     * @param city 城市名称
+     * @param city 城市名称（如果为空或无效，将使用默认城市）
      * @param keywords 搜索关键词（如"美食"、"火锅"等）
-     * @param region 区域名称（可选）
+     * @param region 区域名称或坐标（格式：经度,纬度，可选）
      * @return 美食推荐列表
      */
     public List<FoodRecommendation> searchFoodRestaurants(String city, String keywords, String region) {
         List<FoodRecommendation> recommendations = new ArrayList<>();
         
         try {
+            // 【关键修复】检查城市是否为无效值，如果无效则使用默认城市
+            String searchCity = city;
+            if (city == null || city.isEmpty() || city.equals("未知城市")) {
+                Log.w(TAG, "城市参数无效: " + city + "，尝试使用坐标或默认城市进行搜索");
+                // 如果有坐标（region），使用坐标；否则使用默认城市
+                if (region != null && !region.isEmpty()) {
+                    searchCity = "北京";  // 设置一个合理的默认城市，但优先使用region坐标
+                    Log.d(TAG, "使用默认城市+坐标组合搜索");
+                } else {
+                    searchCity = "北京";  // 完全降级：使用固定默认城市
+                    Log.d(TAG, "完全降级：使用固定默认城市");
+                }
+            }
+            
             // 构建API请求URL
-            String url = buildSearchUrl(city, keywords, region);
+            String url = buildSearchUrl(searchCity, keywords, region);
             Log.d(TAG, "搜索URL: " + url);
             
             // 发送HTTP请求
@@ -69,7 +84,7 @@ public class AmapApiHelper {
                 // 解析JSON响应
                 recommendations = parseSearchResponse(responseBody);
             } else {
-                Log.e(TAG, "API请求失败: " + response.code());
+                Log.e(TAG, "API请求失败: " + response.code() + ", URL: " + url);
             }
         } catch (IOException e) {
             Log.e(TAG, "搜索餐厅异常", e);
@@ -80,19 +95,39 @@ public class AmapApiHelper {
 
     /**
      * 构建搜索URL
+     * 对中文和特殊字符进行URL编码，确保请求正确
      */
     private String buildSearchUrl(String city, String keywords, String region) {
-        StringBuilder urlBuilder = new StringBuilder(SEARCH_URL);
-        urlBuilder.append("?");
-        urlBuilder.append("key=").append(API_KEY);
-        urlBuilder.append("&keywords=").append(keywords);
-        urlBuilder.append("&city=").append(city);
-        if (region != null && !region.isEmpty()) {
-            urlBuilder.append("&region=").append(region);
+        try {
+            StringBuilder urlBuilder = new StringBuilder(SEARCH_URL);
+            urlBuilder.append("?");
+            urlBuilder.append("key=").append(API_KEY);
+            urlBuilder.append("&keywords=").append(URLEncoder.encode(keywords, "UTF-8"));
+            urlBuilder.append("&city=").append(URLEncoder.encode(city, "UTF-8"));
+            if (region != null && !region.isEmpty()) {
+                urlBuilder.append("&location=").append(region);  // region是坐标，不需要编码
+                urlBuilder.append("&sortrule=distance");
+            }
+            if (city != null && !city.equals("未定位") && !city.contains("坐标")) {
+                // 如果 city 是中文（如海淀区），需要 URL 编码
+                // 如果 city 是 adcode（如 110108），直接传
+                urlBuilder.append("&city=").append(URLEncoder.encode(city, "UTF-8"));
+            }
+            urlBuilder.append("&offset=").append(10);  // 返回10条结果
+            urlBuilder.append("&page=").append(1);
+            return urlBuilder.toString();
+        } catch (Exception e) {
+            Log.e(TAG, "构建URL异常", e);
+            // 降级处理：返回最基础的URL
+            StringBuilder urlBuilder = new StringBuilder(SEARCH_URL);
+            urlBuilder.append("?key=").append(API_KEY);
+            urlBuilder.append("&keywords=").append(keywords);
+            urlBuilder.append("&city=").append(city);
+            if (region != null && !region.isEmpty()) {
+                urlBuilder.append("&region=").append(region);
+            }
+            return urlBuilder.toString();
         }
-        urlBuilder.append("&offset=").append(10);  // 返回10条结果
-        urlBuilder.append("&page=").append(1);
-        return urlBuilder.toString();
     }
 
     /**

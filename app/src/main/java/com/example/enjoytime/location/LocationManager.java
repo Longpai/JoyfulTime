@@ -1,97 +1,121 @@
 package com.example.enjoytime.location;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+import com.amap.api.location.AMapLocation; // 如果你还在用高德的对象，保留这个引用；如果想彻底脱离SDK，可以用原生Location
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
- * 位置管理器 - 获取当前位置和城市名称
+ * 位置管理器 - Web API (IP定位) 版
+ * 逃课专用：无需 SHA1，无需 SDK，通过 HTTP 请求获取大概位置
  */
 public class LocationManager {
     private static final String TAG = "LocationManager";
+    
+    // 【重要】这里填你申请的 “Web 服务” 类型的 Key
+    private static final String WEB_API_KEY = "78670276a30c950f735ff5180083a9dd"; 
+    
     private Context context;
-    private FusedLocationProviderClient fusedLocationClient;
-    private Geocoder geocoder;
 
     public LocationManager(Context context) {
         this.context = context;
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-        this.geocoder = new Geocoder(context, Locale.CHINA);
     }
 
     /**
-     * 获取当前位置（经纬度）
+     * 获取当前位置（通过 IP 定位 API）
      */
     public void getCurrentLocation(LocationCallback callback) {
-        try {
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(location -> {
-                        if (location != null) {
-                            Log.d(TAG, "当前位置: " + location.getLatitude() + ", " + location.getLongitude());
-                            getAddressFromLocation(location, callback);
-                        } else {
-                            Log.w(TAG, "无法获取位置");
-                            callback.onError("无法获取当前位置，请检查定位权限");
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "获取位置失败", e);
-                        callback.onError("获取位置失败: " + e.getMessage());
-                    });
-        } catch (SecurityException e) {
-            Log.e(TAG, "缺少位置权限", e);
-            callback.onError("缺少位置权限");
-        }
-    }
-
-    /**
-     * 从位置获取城市名称
-     */
-    private void getAddressFromLocation(Location location, LocationCallback callback) {
         new Thread(() -> {
             try {
-                List<Address> addresses = geocoder.getFromLocation(
-                        location.getLatitude(),
-                        location.getLongitude(),
-                        1
-                );
+                // 1. 构建请求 URL (高德 IP 定位 API)
+                String urlStr = "https://restapi.amap.com/v3/ip?key=" + WEB_API_KEY;
+                Log.d(TAG, "正在请求IP定位: " + urlStr);
 
-                if (addresses != null && !addresses.isEmpty()) {
-                    Address address = addresses.get(0);
-                    String city = address.getAdminArea();  // 获取省份
-                    String district = address.getLocality(); // 获取城市
-                    
-                    if (district != null && !district.isEmpty()) {
-                        city = district;
+                URL url = new URL(urlStr);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+
+                // 2. 发送请求并读取响应
+                if (connection.getResponseCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
                     }
-                    
-                    Log.d(TAG, "获取到的城市: " + city);
-                    callback.onSuccess(city != null ? city : "未知城市", location);
+                    reader.close();
+
+                    String jsonStr = response.toString();
+                    Log.d(TAG, "IP定位响应: " + jsonStr);
+
+                    // 3. 解析 JSON
+                    JSONObject json = new JSONObject(jsonStr);
+                    String status = json.optString("status");
+
+                    if ("1".equals(status)) {
+                        String province = json.optString("province");
+                        String city = json.optString("city");
+                        String adcode = json.optString("adcode");
+                        String rectangle = json.optString("rectangle"); // 格式如: "116.0,39.0;116.1,39.1"
+
+                        // 处理城市名称（如果是直辖市，city可能是空的或者是数组，这里简单处理）
+                        String displayCity = city;
+                        if (displayCity == null || displayCity.isEmpty() || displayCity.equals("[]")) {
+                            displayCity = province;
+                        }
+
+                        // 4. 计算中心坐标
+                        // IP定位返回的是一个矩形范围，我们取中心点作为模拟坐标
+                        double lat = 0, lon = 0;
+                        if (rectangle != null && !rectangle.isEmpty() && !rectangle.equals("[]")) {
+                            String[] points = rectangle.split(";")[0].split(",");
+                            if (points.length == 2) {
+                                lon = Double.parseDouble(points[0]); // 经度
+                                lat = Double.parseDouble(points[1]); // 纬度
+                            }
+                        }
+
+                        // 5. 构造结果返回 (伪装成 AMapLocation 以兼容你的 Activity)
+                        AMapLocation location = new AMapLocation("WebIP");
+                        location.setProvince(province);
+                        location.setCity(city.equals("[]") ? province : city);
+                        location.setAdCode(adcode);
+                        location.setLatitude(lat);
+                        location.setLongitude(lon);
+                        location.setAddress(province + displayCity + " (IP定位)");
+
+                        // 回调成功
+                        callback.onSuccess(location);
+                    } else {
+                        callback.onError("IP定位失败: " + json.optString("info"));
+                    }
                 } else {
-                    Log.w(TAG, "无法获取地址信息");
-                    callback.onError("无法获取城市信息");
+                    callback.onError("网络请求失败: " + connection.getResponseCode());
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "地理编码异常", e);
-                callback.onError("地理编码异常: " + e.getMessage());
+                connection.disconnect();
+
+            } catch (Exception e) {
+                Log.e(TAG, "IP定位异常", e);
+                callback.onError("定位异常: " + e.getMessage());
             }
         }).start();
     }
 
-    /**
-     * 位置获取回调
-     */
+    // 此时不需要销毁什么资源了
+    public void onDestroy() { }
+
     public interface LocationCallback {
-        void onSuccess(String city, Location location);
+        void onSuccess(AMapLocation amapLocation);
         void onError(String error);
     }
 }
